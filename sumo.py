@@ -34,7 +34,7 @@ for i in range(num_vehicles):
     depart_time += 1  # 调整出发时间
 # 添加车辆
 n=0#仿真周期数
-simulation_steps = 1000  # 总共运行的仿真步数
+simulation_steps = 1000000  # 总共运行的仿真步数
 for step in range(simulation_steps):
     traci.simulationStep()
     time0 = traci.simulation.getCurrentTime()
