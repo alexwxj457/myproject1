@@ -40,11 +40,11 @@ for step in range(simulation_steps):
     time0 = traci.simulation.getCurrentTime()
     time1=time0/1000
     time=time1-n*90
-    # 获取信号灯状态
+
     print(time)
     if time==90:
         n+=1
-
+    # 获取信号灯状态（信号灯为四相位，直行相位为33s，左转相位为6s）
     tls_state = traci.trafficlight.getRedYellowGreenState(junction_id)
     if time==0:
         tls_state = "GGGrrrrrrrGGGrrrrrrr"
