@@ -37,11 +37,12 @@ n=0#仿真周期数
 simulation_steps = 88888  # 总共运行的仿真步数
 for step in range(simulation_steps):
     traci.simulationStep()
+    queue_length = traci.lanearea.getLastStepHaltingNumber("e2det_-E7_2")
+    print("Queue Length:", queue_length)
     time0 = traci.simulation.getCurrentTime()
     time1=time0/1000
     time=time1-n*90
 
-    print(time)
     if time==90:
         n+=1
     # 获取信号灯状态（信号灯为四相位，直行相位为33s，左转相位为6s）
