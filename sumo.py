@@ -8,6 +8,7 @@ import sumolib
 
 import traci # noqa
 from flow import flow
+from sigal import light
 import csv
 
 # 指定启动SUMO的命令和参数
@@ -38,36 +39,33 @@ flow(2,car="bus")
 n=0#仿真周期数
 simulation_steps = 88888  # 总共运行的仿真步数
 time=0
+sg=0
 for step in range(simulation_steps):
     traci.simulationStep()
     queue_length = traci.lanearea.getLastStepHaltingNumber("e2det_-E7_2")
     # print("Queue Length:", queue_length)
     time0 = traci.simulation.getCurrentTime()
     time1=time0/1000
+    time = time1 - n * 90
 
-    if time==90:
-        n+=1
-        time=0
     # 获取信号灯状态（信号灯为四相位，直行相位为33s，左转相位为6s）
     tls_state = traci.trafficlight.getRedYellowGreenState(junction_id)
-    if time==45:
-        tls_state = "GGGrrrrrrrGGGrrrrrrr"
-    if time==78:
-        tls_state = "yyyrrrrrrryyyrrrrrrr"
-    if time == 81:
-        tls_state = "rrrGGrrrrrrrrGGrrrrr"
-    if time == 87:
-        tls_state = "rrryyrrrrrrrryyrrrrr"
+    vehicle_position = traci.vehicle.getPosition("car0")
+    print(vehicle_position[0])
+    # if tls_state[8]=='r' and -vehicle_position[0]<50:
+    #     sg=1
 
-    if time == 0:
-        tls_state = "rrrrrGGGrrrrrrrGGGrr"
-    if time == 33:
-        tls_state = "rrrrryyyrrrrrrryyyrr"
-    if time == 36:
-         tls_state = "rrrrrrrrGGrrrrrrrrGG"
-    if time == 42:
-        tls_state = "rrrrrrrryyrrrrrrrryy"
-    time = time1 - n * 90
+    phase_list=[ "rrrrrGGGrrrrrrrGGGrr","rrrrrrrrGGrrrrrrrrGG","GGGrrrrrrrGGGrrrrrrr","rrrGGrrrrrrrrGGrrrrr"]
+    phase_time_list=[33,15,33,15]
+    light_set,time_set=light(phase_list,phase_time_list)
+    if sg==0:
+        closest_number = max([x for x in time_set if x <= time])
+        tls_state=light_set[time_set.index(closest_number)]
+    # if sg==1:
+    #         tls_state="rrrrrrrrGGrrrrrrrrGG"
+
+    if time==89:
+        n+=1
     # speed = traci.vehicle.getSpeed("vehicle1")
     # if speed<0:
     #     print("Vehicle speed:", 0)
