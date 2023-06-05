@@ -45,7 +45,6 @@ for step in range(simulation_steps):
     time0 = traci.simulation.getCurrentTime()
     time1=time0/1000
 
-
     if time==90:
         n+=1
         time=0
