@@ -7,7 +7,7 @@ import random
 import sumolib
 
 import traci # noqa
-
+from flow import flow
 import csv
 
 # 指定启动SUMO的命令和参数
@@ -19,53 +19,61 @@ junction_id = "J2"
 
 # 设置信号灯的状态
 # 红灯：rrrr, 绿灯：GGGG, 黄灯：yyyy
-traci.trafficlight.setRedYellowGreenState(junction_id, "GGGrrrrrrrGGGrrrrrrr")  # 设置为绿灯状态
+traci.trafficlight.setRedYellowGreenState(junction_id, "rrrrrGGGrrrrrrrGGGrr")  # 设置为绿灯状态
 
 # 启动SUMO仿真并连接到SUMO进程
 # 车流量参数
-num_vehicles = 10  # 要添加的车辆数量
-depart_time = 0  # 初始出发时间
-depart_speed = 10  # 初始出发速度
-depart_lane = "best"  # 初始出发车道
-# 启动 SUMO 仿真
-for i in range(num_vehicles):
-    vehicle_id = f"vehicle{i}"
-    traci.vehicle.add(vehicle_id, "r1", typeID="bus",depart=depart_time, departLane=depart_lane,departSpeed=depart_speed)
-    depart_time += 1  # 调整出发时间
+# num_vehicles = 10  # 要添加的车辆数量
+# depart_time = 30  # 初始出发时间
+# depart_speed = 10  # 初始出发速度
+# depart_lane = "best"  # 初始出发车道
+# # 启动 SUMO 仿真
+# # for i in range(num_vehicles):
+# vehicle_id = f"vehicle1"
+# traci.vehicle.add(vehicle_id, "r1", typeID="bus",depart=depart_time, departLane=depart_lane,departSpeed=depart_speed)
+flow(10,car="car")
+flow(2,car="bus")
+    # depart_time += 1  # 调整出发时间
 # 添加车辆
 n=0#仿真周期数
 simulation_steps = 88888  # 总共运行的仿真步数
+time=0
 for step in range(simulation_steps):
     traci.simulationStep()
     queue_length = traci.lanearea.getLastStepHaltingNumber("e2det_-E7_2")
-    print("Queue Length:", queue_length)
+    # print("Queue Length:", queue_length)
     time0 = traci.simulation.getCurrentTime()
     time1=time0/1000
-    time=time1-n*90
+
 
     if time==90:
         n+=1
+        time=0
     # 获取信号灯状态（信号灯为四相位，直行相位为33s，左转相位为6s）
     tls_state = traci.trafficlight.getRedYellowGreenState(junction_id)
-    if time==0:
+    if time==45:
         tls_state = "GGGrrrrrrrGGGrrrrrrr"
-    if time==33:
+    if time==78:
         tls_state = "yyyrrrrrrryyyrrrrrrr"
-    if time == 36:
+    if time == 81:
         tls_state = "rrrGGrrrrrrrrGGrrrrr"
-    if time == 42:
+    if time == 87:
         tls_state = "rrryyrrrrrrrryyrrrrr"
 
-    if time == 45:
+    if time == 0:
         tls_state = "rrrrrGGGrrrrrrrGGGrr"
-    if time == 78:
+    if time == 33:
         tls_state = "rrrrryyyrrrrrrryyyrr"
-    if time == 81:
+    if time == 36:
          tls_state = "rrrrrrrrGGrrrrrrrrGG"
-    if time == 87:
+    if time == 42:
         tls_state = "rrrrrrrryyrrrrrrrryy"
-    speed = traci.vehicle.getSpeed("vehicle1")
-    print("Vehicle speed:", speed)
+    time = time1 - n * 90
+    # speed = traci.vehicle.getSpeed("vehicle1")
+    # if speed<0:
+    #     print("Vehicle speed:", 0)
+    # else:
+    #     print("Vehicle speed:", speed)
         # 改变信号灯状态
     traci.trafficlight.setRedYellowGreenState(junction_id, tls_state)
 
