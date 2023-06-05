@@ -12,6 +12,5 @@ def  flow(num,car):
            vehicle_id = f"{car}{n}"
            n+=1
            traci.vehicle.add(vehicle_id, "r1", typeID=car,depart=time, departLane="best",departSpeed=10)
-           print(time)
         time+=1
 
