@@ -12,8 +12,7 @@ def  flow(num,car):#生成的车辆数和车辆类型
         if i==1:
            vehicle_id = f"{car}{n}"#车辆名称
            n+=1
-           traci.vehicle.add(vehicle_id, "r1", typeID=car,depart=time, departLane="best",departSpeed=10)#生成车辆
-           print(time)
+           traci.vehicle.add(vehicle_id, "r0", typeID=car,depart=time, departLane="best",departSpeed=10)#生成车辆
         time+=1
 
 
